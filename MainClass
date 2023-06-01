@@ -1,0 +1,152 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class Main extends JFrame {
+    private final List<String> availableIngredients;
+    private final List<Recipe> recipes;
+    private final JTextArea outputTextArea;
+    private final List<JCheckBox> ingredientCheckBoxes;
+
+    public Main() {
+
+        availableIngredients = Arrays.asList("dal", "tomato", "onion", "garlic", "mustard oil",
+                "salt", "pepper", "pasta", "cheese","green chillies","potato","olive oil");
+
+
+        recipes = new ArrayList<>();
+        recipes.add(new Recipe("Dal Makhani",
+                Arrays.asList("dal", "green chillies", "tomato", "onion", "garlic", "mustard oil", "salt", "pepper")));
+        recipes.add(new Recipe("Cheesy Tomato Pasta",
+                Arrays.asList("pasta", "tomato", "garlic", "olive oil", "salt", "pepper", "cheese")));
+        recipes.add(new Recipe("Aloo Masala",
+                Arrays.asList("potato", "green chillies","onion", "garlic", "mustard oil", "salt", "pepper")));
+
+
+        setTitle("Recipe Suggestions");
+        setSize(600, 500);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+        getContentPane().setBackground(new Color(240, 240, 240));
+
+
+        JPanel ingredientPanel = new JPanel();
+        ingredientPanel.setLayout(new GridLayout(0, 3));
+        ingredientPanel.setBackground(new Color(220, 220, 220));
+
+
+        ingredientCheckBoxes = new ArrayList<>();
+        for (String ingredient : availableIngredients) {
+            JCheckBox checkBox = new JCheckBox(ingredient);
+            checkBox.setBackground(new Color(220, 220, 220));
+            ingredientCheckBoxes.add(checkBox);
+            ingredientPanel.add(checkBox);
+        }
+
+
+        JButton suggestButton = new JButton("Suggest Recipes");
+        suggestButton.setBackground(new Color(135, 206, 250));
+        suggestButton.setForeground(Color.WHITE);
+        suggestButton.addActionListener(new SuggestButtonListener());
+
+
+        JPanel outputPanel = new JPanel();
+        outputPanel.setLayout(new BorderLayout());
+        outputPanel.setBackground(new Color(255, 255, 255));
+        outputPanel.setBounds(0,450,600,50);
+
+        JLabel outputLabel = new JLabel("Suggested Recipes:");
+        outputLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        outputLabel.setForeground(new Color(70, 130, 180));
+        outputLabel.setBounds(0,450,600,50);
+        outputTextArea = new JTextArea();
+        outputTextArea.setEditable(false);
+        outputTextArea.setFont(new Font("Arial", Font.PLAIN, 24));
+        outputTextArea.setBounds(0,450,600,50);
+        JScrollPane outputScrollPane = new JScrollPane(outputTextArea);
+
+        outputPanel.add(outputLabel, BorderLayout.NORTH);
+        outputPanel.add(outputScrollPane, BorderLayout.CENTER);
+
+
+        add(ingredientPanel, BorderLayout.NORTH);
+        add(suggestButton, BorderLayout.SOUTH);
+        add(outputPanel, BorderLayout.CENTER);
+
+        setVisible(true);
+    }
+
+    private List<String> getSelectedIngredients() {
+        List<String> selectedIngredients = new ArrayList<>();
+
+        for (JCheckBox checkBox : ingredientCheckBoxes) {
+            if (checkBox.isSelected()) {
+                selectedIngredients.add(checkBox.getText());
+            }
+        }
+
+        return selectedIngredients;
+    }
+
+    private List<Recipe> findMatchingRecipes(List<String> userIngredients, List<Recipe> recipes) {
+        List<Recipe> matchingRecipes = new ArrayList<>();
+
+        for (Recipe recipe : recipes) {
+            List<String> requiredIngredients = recipe.getRequiredIngredients();
+            if (userIngredients.containsAll(requiredIngredients)) {
+                matchingRecipes.add(recipe);
+            }
+        }
+
+        return matchingRecipes;
+    }
+
+    private class SuggestButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            List<String> selectedIngredients = getSelectedIngredients();
+            List<Recipe> matchingRecipes = findMatchingRecipes(selectedIngredients, recipes);
+
+            outputTextArea.setText("");
+
+            if (matchingRecipes.isEmpty()) {
+                outputTextArea.setText("No recipes found with the selected ingredients.");
+            } else {
+                for (Recipe recipe : matchingRecipes) {
+                    outputTextArea.append("- " + recipe.getName() + "\n");
+                }
+            }
+        }
+    }
+
+    static class Recipe {
+        private final String name;
+        private final List<String> requiredIngredients;
+
+        public Recipe(String name, List<String> requiredIngredients) {
+            this.name = name;
+            this.requiredIngredients = requiredIngredients;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public List<String> getRequiredIngredients() {
+            return requiredIngredients;
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new Main();
+            }
+        });
+    }
+}
