@@ -21,7 +21,7 @@ This program asks for avalaible ingredients and then suggests recipes on the sam
 
 - Compile Main.java with javac Main.java
 
-- Then run java Main.java to launch the Recipe-Teller.
+- Then call java Main to launch the Recipe-Teller.
 
 You can add or edit the recipes whenever your like.
 
