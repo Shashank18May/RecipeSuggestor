@@ -10,8 +10,8 @@ This program asks for avalaible ingredients and then suggests recipes on the sam
 - A JDK(any version above 1.7.5)
 - The following files:-
   - Main.java
-  - Quiz.java
-  - questions.csv
+  - GuiVersion.java
+- An IDE(optional)
 
 ## If you want to run this code:- 
 
