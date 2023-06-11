@@ -16,7 +16,7 @@ This program asks for avalaible ingredients and then suggests recipes on the sam
 ## If you want to run this code:- 
 
 - Just clone this repo and extract it where ever you like.
-- 
+
 - Open cmd.
 
 - Compile Main.java with javac Main.java
